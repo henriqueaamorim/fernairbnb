@@ -44,7 +44,7 @@ body {
 
 .sidebar h1 {
   margin: 0;
-  font-size: 2.0rem;
+  font-size: 1.4rem;
 }
 
 .sidebar p {
@@ -56,8 +56,6 @@ body {
 .brand-title-wrap {
   display: inline-flex;
   align-items: center;
-  width: 178px;
-  height: 60px;
   padding: 10px 16px;
   border-radius: 14px;
   background: var(--color-canvas-cloud);
@@ -67,22 +65,18 @@ body {
 
 .brand-title {
   margin: 0;
-  color: rgba(1, 69, 242, 1);
+  color: var(--color-electric-blue);
   font-family: "Pacifico", "Brush Script MT", cursive;
-  font-size: 37px;
-  font-weight: 300;
-  text-align: left;
-  vertical-align: middle;
+  font-size: 2.05rem;
   line-height: 1;
   letter-spacing: 0.5px;
 }
 
 .brand-subtitle {
   margin-top: 14px;
-  color: rgba(51, 51, 51, 1);
-  font-family: "SF Compact Display", sans-serif;
+  color: var(--color-text);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 500;
   max-width: 220px;
 }
 
@@ -109,33 +103,9 @@ body {
 
 .hero-card {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   gap: 16px;
-  align-items: flex-start;
-}
-
-.hero-text {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.hero-fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  width: 100%;
-}
-
-.hero-fields label {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.hero-fields input {
-  min-width: 180px;
+  align-items: center;
 }
 
 .hero-card h2 {
@@ -144,7 +114,7 @@ body {
 }
 
 .hero-card p {
-  margin: 0;
+  margin-top: 6px;
   color: var(--color-text);
   opacity: 0.8;
 }
@@ -333,4 +303,9 @@ td input {
 .unit-list .active-unit {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(147, 169, 226, 0.35);
+}
+
+.platform-cancelled {
+  color: #d32f2f;
+  font-weight: 600;
 }

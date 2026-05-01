@@ -4,6 +4,8 @@ import type {
   CanonicalReservation,
   ConsolidatedReservation,
   MappingV2,
+  PdfReportPayload,
+  PdfReportReservation,
   ReservationConflict,
   SourcePlatform
 } from "./types.js";
@@ -173,7 +175,16 @@ export class ReconciliationService {
       });
     }
 
-    return { reservations, conflicts };
+    const orderedReservations = reservations.sort((a, b) => {
+      const left = new Date(a.startDate).getTime();
+      const right = new Date(b.startDate).getTime();
+      if (Number.isNaN(left) && Number.isNaN(right)) return 0;
+      if (Number.isNaN(left)) return 1;
+      if (Number.isNaN(right)) return -1;
+      return left - right;
+    });
+
+    return { reservations: orderedReservations, conflicts };
   }
 
   applyResolutions(
@@ -207,5 +218,56 @@ export class ReconciliationService {
     }
     const diff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
     return diff > 0 ? diff : 0;
+  }
+
+  toPdfReportPayload(params: {
+    studio: string;
+    nomeRelatorio: string;
+    ownerName: string;
+    ownerDocument: string;
+    taxaPercentual: number;
+    reservations: ConsolidatedReservation[];
+  }): PdfReportPayload {
+    const ordered = [...params.reservations].sort((a, b) => {
+      const left = new Date(a.startDate).getTime();
+      const right = new Date(b.startDate).getTime();
+      if (Number.isNaN(left) && Number.isNaN(right)) return 0;
+      if (Number.isNaN(left)) return 1;
+      if (Number.isNaN(right)) return -1;
+      return left - right;
+    });
+
+    const reservas: PdfReportReservation[] = ordered.map((reservation) => {
+      const status = reservation.status || "";
+      const isCancelled = status.toLowerCase().includes("cancel");
+      return {
+        inicio: reservation.startDate,
+        fim: reservation.endDate,
+        plataforma: isCancelled ? `Cancelado - ${reservation.platform}` : reservation.platform,
+        noites: reservation.nights,
+        valor: reservation.bookingValue,
+        status
+      };
+    });
+
+    const subtotal = toMoney(reservas.reduce((acc, row) => acc + row.valor, 0));
+    const totalNoites = reservas.reduce((acc, row) => acc + row.noites, 0);
+    const taxaValor = toMoney(subtotal * (params.taxaPercentual / 100));
+    const valorLiquido = toMoney(subtotal - taxaValor);
+
+    return {
+      studio: params.studio,
+      nomeRelatorio: params.nomeRelatorio,
+      proprietario: {
+        nome: params.ownerName,
+        cpf: params.ownerDocument
+      },
+      taxaPercentual: params.taxaPercentual,
+      reservas,
+      subtotal,
+      totalNoites,
+      taxaValor,
+      valorLiquido
+    };
   }
 }

@@ -6,11 +6,11 @@ const supabase = createClient(
 );
 
 Deno.serve(async (request) => {
-  const { sessionId } = await request.json();
+  const { sessionId, afterExport } = await request.json();
   if (sessionId) {
     const { error } = await supabase.from("import_sessions").delete().eq("id", sessionId);
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-    return new Response(JSON.stringify({ ok: true, deletedSession: sessionId }));
+    return new Response(JSON.stringify({ ok: true, deletedSession: sessionId, afterExport: Boolean(afterExport) }));
   }
 
   const { error } = await supabase.rpc("cleanup_expired_import_sessions");

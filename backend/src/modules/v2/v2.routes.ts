@@ -55,8 +55,9 @@ const reconcileApplySchema = z.object({
 const exportMetadataSchema = z.object({
   ownerName: z.string().default("Proprietária"),
   ownerDocument: z.string().default("CPF não informado"),
-  closingPeriod: z.string().default("Fechamento mensal"),
-  unitName: z.string().default("Todas as unidades")
+  nomeRelatorio: z.string().default("01_2026"),
+  studio: z.string().optional(),
+  taxaPercentual: z.number().min(0).max(100).default(20)
 });
 
 const jobStore = new JobStoreService();
@@ -160,10 +161,19 @@ export async function registerV2Routes(app: FastifyInstance): Promise<void> {
       throw new Error("Não há dados consolidados para exportar.");
     }
 
-    const pdf = await pdfService.render({
-      ...metadata,
-      reservations: session.lastPreview.reservations
+    const studio = metadata.studio ?? session.lastPreview.reservations[0]?.unit ?? "Unidade";
+    const filteredReservations = metadata.studio
+      ? session.lastPreview.reservations.filter((row) => row.unit === metadata.studio)
+      : session.lastPreview.reservations;
+    const payload = reconciliationService.toPdfReportPayload({
+      studio,
+      nomeRelatorio: metadata.nomeRelatorio,
+      ownerName: metadata.ownerName,
+      ownerDocument: metadata.ownerDocument,
+      taxaPercentual: metadata.taxaPercentual,
+      reservations: filteredReservations
     });
+    const pdf = await pdfService.render(payload);
     reply.header("content-type", "application/pdf").header("content-disposition", 'attachment; filename="relatorio-v1.pdf"').send(pdf);
   });
 
@@ -188,15 +198,22 @@ export async function registerV2Routes(app: FastifyInstance): Promise<void> {
       throw new Error("Não há dados consolidados para exportar.");
     }
 
-    const pdf = await pdfService.render({
-      ...metadata,
-      reservations: session.lastPreview.reservations
-    });
     const xls = xlsService.buildWorkbook(session.lastPreview.reservations, session.lastPreview.conflicts);
-    const zip = await bundleService.zip([
-      { name: "relatorio-v1.pdf", content: pdf },
-      { name: "relatorio-consolidado.xlsx", content: xls }
-    ]);
+    const units = bundleService.splitByUnit(session.lastPreview.reservations);
+    const pdfFiles: Array<{ name: string; content: Buffer }> = [];
+    for (const unit of units) {
+      const payload = reconciliationService.toPdfReportPayload({
+        studio: unit.unitName,
+        nomeRelatorio: metadata.nomeRelatorio,
+        ownerName: metadata.ownerName,
+        ownerDocument: metadata.ownerDocument,
+        taxaPercentual: metadata.taxaPercentual,
+        reservations: unit.rows
+      });
+      const pdf = await pdfService.render(payload);
+      pdfFiles.push({ name: bundleService.createPdfFilename(payload), content: pdf });
+    }
+    const zip = await bundleService.zip([...pdfFiles, { name: "relatorio-consolidado.xlsx", content: xls }]);
     reply.header("content-type", "application/zip").header("content-disposition", 'attachment; filename="relatorios-v2.zip"').send(zip);
   });
 }

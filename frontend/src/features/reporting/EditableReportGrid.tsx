@@ -28,7 +28,9 @@ export function EditableReportGrid({ report, onUpdateValue }: EditableReportGrid
           {report.reservations.map((row) => (
             <tr key={row.key}>
               <td>{formatDateBR(row.startDate)} a {formatDateBR(row.endDate)}</td>
-              <td>{row.platform}</td>
+              <td className={row.status.toLowerCase().includes("cancel") ? "platform-cancelled" : ""}>
+                {row.status.toLowerCase().includes("cancel") ? `Cancelado - ${row.platform}` : row.platform}
+              </td>
               <td>{row.nights}</td>
               <td>
                 <input

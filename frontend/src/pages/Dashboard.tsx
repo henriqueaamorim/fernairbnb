@@ -59,13 +59,22 @@ export function Dashboard() {
   }
 
   async function exportZip() {
-    const blob = await exportAllReportsZip(reports, referenceMonth);
+    const blob = await exportAllReportsZip(reports, {
+      nomeRelatorio: referenceMonth,
+      ownerName: "Suely Marcelino Da Rocha",
+      ownerCpf: "274.233.398-30"
+    });
     downloadBlob(blob, `Relatorios_${referenceMonth}.zip`);
   }
 
   function exportCurrentPdf() {
     if (!selectedReport) return;
-    const blob = buildUnitPdf(selectedReport, referenceMonth);
+    const blob = buildUnitPdf(selectedReport, {
+      studio: selectedReport.unitName,
+      nomeRelatorio: referenceMonth,
+      ownerName: "Suely Marcelino Da Rocha",
+      ownerCpf: "274.233.398-30"
+    });
     downloadBlob(blob, `${selectedReport.unitName}_${referenceMonth}.pdf`);
   }
 
@@ -79,15 +88,10 @@ export function Dashboard() {
       </aside>
       <main className="content">
         <section className="hero-card">
-          <div className="hero-text">
-            <h2>Prestação de contas mensal</h2>
-            <p>{status}</p>
-          </div>
-          <div className="hero-fields">
-            <label>
-              Mês de referência
-              <input value={referenceMonth} onChange={(event) => setReferenceMonth(event.target.value)} />
-            </label>
+          <h2>Prestação de contas mensal</h2>
+          <p>{status}</p>
+          <div className="actions">
+            <input value={referenceMonth} onChange={(event) => setReferenceMonth(event.target.value)} />
             <label>
               Taxa NEW HABITAT (%)
               <input

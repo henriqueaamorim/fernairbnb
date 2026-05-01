@@ -62,6 +62,32 @@ export interface ConsolidatedReservation {
   mergedFrom: CanonicalReservation["sourceRefs"];
 }
 
+export interface PdfReportOwner {
+  nome: string;
+  cpf: string;
+}
+
+export interface PdfReportReservation {
+  inicio: string;
+  fim: string;
+  plataforma: string;
+  noites: number;
+  valor: number;
+  status: string;
+}
+
+export interface PdfReportPayload {
+  studio: string;
+  nomeRelatorio: string;
+  proprietario: PdfReportOwner;
+  taxaPercentual: number;
+  reservas: PdfReportReservation[];
+  subtotal: number;
+  totalNoites: number;
+  taxaValor: number;
+  valorLiquido: number;
+}
+
 export interface JobFile {
   fileId: string;
   name: string;

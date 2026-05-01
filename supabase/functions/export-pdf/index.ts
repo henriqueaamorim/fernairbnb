@@ -6,8 +6,8 @@ const supabase = createClient(
 );
 
 Deno.serve(async (request) => {
-  const { sessionId, unitId } = await request.json();
-  if (!sessionId || !unitId) {
+  const { sessionId, unitId, studio, nomeRelatorio } = await request.json();
+  if (!sessionId || !unitId || !studio || !nomeRelatorio) {
     return new Response(JSON.stringify({ error: "missing_params" }), { status: 400 });
   }
 
@@ -20,6 +20,5 @@ Deno.serve(async (request) => {
 
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
 
-  // Renderizacao final do PDF ocorre no frontend para manter simplicidade do MVP.
-  return new Response(JSON.stringify({ ok: true, rows: data ?? [] }));
+  return new Response(JSON.stringify({ ok: true, studio, nomeRelatorio, rows: data ?? [] }));
 });
