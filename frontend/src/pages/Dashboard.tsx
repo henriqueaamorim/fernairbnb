@@ -79,19 +79,22 @@ export function Dashboard() {
   }
 
   return (
-    <div className="app">
-      <aside className="sidebar">
+    <div className="app app--hero-layout">
+      <header className="brand-hero" aria-label="Marca fernairbnb">
         <div className="brand-title-wrap">
           <h1 className="brand-title">fernairbnb</h1>
         </div>
         <p className="brand-subtitle">Consolidação de faturamento por unidade</p>
-      </aside>
+      </header>
       <main className="content">
         <section className="hero-card">
           <h2>Prestação de contas mensal</h2>
           <p>{status}</p>
-          <div className="actions">
-            <input value={referenceMonth} onChange={(event) => setReferenceMonth(event.target.value)} />
+          <div className="hero-fields">
+            <label>
+              Nome do Relatório
+              <input value={referenceMonth} onChange={(event) => setReferenceMonth(event.target.value)} />
+            </label>
             <label>
               Taxa NEW HABITAT (%)
               <input

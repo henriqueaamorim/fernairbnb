@@ -36,6 +36,59 @@ body {
   min-height: 100vh;
 }
 
+/* Dashboard: faixa superior estilo hero, rolagem só na área principal */
+.app.app--hero-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.brand-hero {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 28px;
+  padding: 14px 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(147, 169, 226, 1) 0%,
+    rgba(168, 186, 232, 1) 32%,
+    rgba(207, 217, 242, 1) 71%
+  );
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0px 6px 20px 0px rgba(48, 48, 48, 0.12);
+}
+
+.brand-hero .brand-subtitle {
+  margin: 0;
+  max-width: 28rem;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .brand-hero .brand-subtitle {
+    text-align: left;
+  }
+
+  .brand-hero {
+    justify-content: flex-start;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+.app--hero-layout .content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .sidebar {
   background: var(--color-primary);
   color: var(--color-text);
@@ -56,20 +109,40 @@ body {
 .brand-title-wrap {
   display: inline-flex;
   align-items: center;
-  padding: 10px 16px;
-  border-radius: 14px;
+  vertical-align: middle;
+  text-align: center;
+  width: 196px;
+  height: 59px;
+  padding: 10px 10px;
+  border-radius: 10px;
   background: var(--color-canvas-cloud);
-  border: 2px solid var(--color-electric-blue);
+  border: 4px solid var(--color-electric-blue);
   box-shadow: 0 6px 12px rgba(1, 69, 242, 0.18);
+  overflow: hidden;
 }
 
 .brand-title {
   margin: 0;
-  color: var(--color-electric-blue);
-  font-family: "Pacifico", "Brush Script MT", cursive;
-  font-size: 2.05rem;
-  line-height: 1;
-  letter-spacing: 0.5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  width: 178px;
+  height: 36px;
+  color: rgba(1, 69, 242, 1);
+  font-family:
+    SFMono-Regular,
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  font-weight: 700;
+  font-size: 29px;
+  line-height: 27px;
+  letter-spacing: 0px;
+  text-align: center;
+  background-clip: unset;
+  -webkit-background-clip: unset;
 }
 
 .brand-subtitle {
@@ -103,9 +176,25 @@ body {
 
 .hero-card {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hero-fields {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hero-fields label {
+  min-width: 220px;
+}
+
+.hero-fields input {
+  min-width: 220px;
 }
 
 .hero-card h2 {
@@ -114,7 +203,7 @@ body {
 }
 
 .hero-card p {
-  margin-top: 6px;
+  margin: 0;
   color: var(--color-text);
   opacity: 0.8;
 }
@@ -266,7 +355,7 @@ td input {
 }
 
 @media (max-width: 1100px) {
-  .app {
+  .app:not(.app--hero-layout) {
     grid-template-columns: 1fr;
   }
 
